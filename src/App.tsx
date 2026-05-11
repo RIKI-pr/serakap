@@ -57,6 +57,10 @@ import {
   BookOpen,
   Bike,
   Footprints,
+  Users,
+  CheckSquare,
+  StickyNote,
+  Calendar,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -148,396 +152,28 @@ const getPercentage = (part, total) => {
 // ==========================================
 const INITIAL_DATA = {
   user: {
-    name: "Riki",
-    email: "riki@example.com",
-    job: "Product Designer",
+    name: "User",
+    email: "",
+    job: "-",
     avatar:
       "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
-    tier: "Pro Member",
+    tier: "Free Member",
   },
   summary: {
-    incomeMonth: 15500000,
-    expenseMonth: 4200000,
-    lastMonthIncome: 14000000,
-    lastMonthExpense: 5000000,
+    incomeMonth: 0,
+    expenseMonth: 0,
+    lastMonthIncome: 0,
+    lastMonthExpense: 0,
   },
-  pockets: [
-    {
-      id: "p1",
-      name: "SeaBank",
-      type: "Tabungan",
-      balance: 15300000,
-      in: 12000000,
-      out: 1500000,
-      trxCount: 12,
-      lastTrx: "2 Jam lalu",
-      status: "Aman",
-      color: "text-blue-500",
-      bg: "bg-blue-50",
-      icon: "building",
-    },
-    {
-      id: "p2",
-      name: "Bank BSI",
-      type: "Operasional",
-      balance: 8500000,
-      in: 3000000,
-      out: 2100000,
-      trxCount: 28,
-      lastTrx: "Hari ini",
-      status: "Paling Aktif",
-      color: "text-emerald-500",
-      bg: "bg-emerald-50",
-      icon: "building",
-    },
-    {
-      id: "p3",
-      name: "DANA",
-      type: "E-Wallet",
-      balance: 1200000,
-      in: 500000,
-      out: 600000,
-      trxCount: 15,
-      lastTrx: "Kemarin",
-      status: "Boros",
-      color: "text-sky-500",
-      bg: "bg-sky-50",
-      icon: "smartphone",
-    },
-  ],
-  transactions: [
-    {
-      id: "t1",
-      title: "Gaji Freelance UI/UX",
-      amount: 12500000,
-      type: "income",
-      date: new Date().toISOString(),
-      time: "09:00",
-      category: "Pekerjaan",
-      method: "Transfer Bank",
-      pocket: "SeaBank",
-      icon: "briefcase",
-      isToday: true,
-      important: true,
-      dateInt: 4,
-    },
-    {
-      id: "t2",
-      title: "Makan Siang Nasi Padang",
-      amount: 45000,
-      type: "expense",
-      date: new Date().toISOString(),
-      time: "12:30",
-      category: "Makan",
-      method: "QRIS",
-      pocket: "DANA",
-      icon: "coffee",
-      isToday: true,
-      important: false,
-      dateInt: 4,
-    },
-    {
-      id: "t3",
-      title: "Topup E-Money",
-      amount: 100000,
-      type: "transfer",
-      date: new Date().toISOString(),
-      time: "14:00",
-      category: "Transportasi",
-      method: "Transfer",
-      pocket: "Bank BSI",
-      icon: "car",
-      isToday: true,
-      important: false,
-      dateInt: 4,
-    },
-    {
-      id: "t4",
-      title: "Langganan Netflix",
-      amount: 185000,
-      type: "expense",
-      date: "2026-05-03T19:30:00",
-      time: "19:30",
-      category: "Tagihan",
-      method: "Auto-Debit",
-      pocket: "SeaBank",
-      icon: "film",
-      isToday: false,
-      routine: true,
-      dateInt: 3,
-    },
-    {
-      id: "t6",
-      title: "Belanja Bulanan",
-      amount: 1850000,
-      type: "expense",
-      date: "2026-05-02T10:00:00",
-      time: "10:00",
-      category: "Belanja",
-      method: "Debit Card",
-      pocket: "Bank BSI",
-      icon: "shopping-bag",
-      isToday: false,
-      important: true,
-      dateInt: 2,
-    },
-  ],
-  budgets: [
-    {
-      id: "b1",
-      name: "Makan & Minum",
-      category: "Konsumsi",
-      spent: 1800000,
-      limit: 2000000,
-      period: "Bulan Ini",
-      color: "text-orange-500",
-      bg: "bg-orange-50",
-      icon: "coffee",
-    },
-    {
-      id: "b2",
-      name: "Transportasi",
-      category: "Transport",
-      spent: 400000,
-      limit: 1000000,
-      period: "Bulan Ini",
-      color: "text-violet-500",
-      bg: "bg-violet-50",
-      icon: "car",
-    },
-    {
-      id: "b3",
-      name: "Tagihan & Utilitas",
-      category: "Tagihan",
-      spent: 2600000,
-      limit: 2500000,
-      period: "Bulan Ini",
-      color: "text-rose-500",
-      bg: "bg-rose-50",
-      icon: "wifi",
-    },
-  ],
-  targets: [
-    {
-      id: "tg1",
-      name: "Dana Darurat",
-      target: 50000000,
-      current: 20000000,
-      startDate: "2026-01-01",
-      endDate: "2027-01-01",
-      status: "Dalam Proses",
-      pocket: "SeaBank",
-    },
-    {
-      id: "tg2",
-      name: "Laptop Baru",
-      target: 25000000,
-      current: 23500000,
-      startDate: "2026-02-01",
-      endDate: "2026-06-01",
-      status: "Hampir Tercapai",
-      pocket: "SeaBank",
-    },
-  ],
-  tasks: [
-    {
-      id: "tk0",
-      title: "Follow up Email Vendor",
-      date: "2026-05-02T09:00:00",
-      time: "10:00",
-      status: "belum",
-      priority: "tinggi",
-      category: "Pekerjaan",
-      isToday: false,
-      desc: "Tanyakan progres cetak stiker.",
-      dateInt: 2,
-    },
-    {
-      id: "tk1",
-      title: "Kirim Invoice Klien",
-      date: new Date().toISOString(),
-      time: "09:00",
-      status: "selesai",
-      priority: "tinggi",
-      category: "Keuangan",
-      isToday: true,
-      desc: "Invoice proyek Redesign App.",
-      dateInt: 4,
-    },
-    {
-      id: "tk2",
-      title: "Bayar Tagihan Internet",
-      date: new Date().toISOString(),
-      time: "14:00",
-      status: "proses",
-      priority: "mendesak",
-      category: "Tagihan",
-      isToday: true,
-      desc: "Batas akhir pembayaran hari ini.",
-      dateInt: 4,
-    },
-    {
-      id: "tk3",
-      title: "Olahraga Sore",
-      date: new Date().toISOString(),
-      time: "17:30",
-      status: "belum",
-      priority: "rendah",
-      category: "Kesehatan",
-      isToday: true,
-      desc: "Jogging 30 menit keliling taman.",
-      dateInt: 4,
-    },
-    {
-      id: "tk4",
-      title: "Review Draft Fitur Baru",
-      date: "2026-05-05T10:00:00",
-      time: "10:00",
-      status: "belum",
-      priority: "sedang",
-      category: "Pekerjaan",
-      isToday: false,
-      desc: "Cek file Figma fitur terbaru.",
-      dateInt: 5,
-    },
-  ],
-  activities: [
-    {
-      id: "a1",
-      title: "Weekly Sync & UI Review",
-      timeStart: "10:00",
-      timeEnd: "11:30",
-      location: "Google Indonesia HQ",
-      type: "Pekerjaan",
-      desc: "Membahas progress sprint minggu ini bersama tim developer dan PM.",
-      color: "bg-blue-500",
-      dateInt: 4,
-      lat: -6.2235,
-      lng: 106.8228,
-      transport: "Motor",
-    },
-    {
-      id: "a2",
-      title: "Makan Siang Bersama Tim",
-      timeStart: "12:00",
-      timeEnd: "13:00",
-      location: "Sate Khas Senayan",
-      type: "Sosial",
-      desc: "Makan siang santai untuk merayakan rilis fitur.",
-      color: "bg-orange-500",
-      dateInt: 4,
-      lat: -6.2155,
-      lng: 106.822,
-      transport: "Jalan Kaki",
-    },
-    {
-      id: "a3",
-      title: "Workshop Design System",
-      timeStart: "15:00",
-      timeEnd: "17:00",
-      location: "Pacific Place Meeting Room",
-      type: "Edukasi",
-      desc: "Sesi sharing tentang komponen Figma terbaru dengan seluruh tim UI/UX.",
-      color: "bg-purple-500",
-      dateInt: 4,
-      lat: -6.2248,
-      lng: 106.8098,
-      transport: "Mobil",
-    },
-    {
-      id: "a4",
-      title: "Perpanjang STNK",
-      timeStart: "09:00",
-      timeEnd: "11:00",
-      location: "Samsat Keliling",
-      type: "Pribadi",
-      desc: "Jangan lupa bawa KTP dan BPKB asli.",
-      color: "bg-rose-500",
-      dateInt: 10,
-      lat: -6.23,
-      lng: 106.815,
-      transport: "Motor",
-    },
-  ],
-  debts: [
-    {
-      id: "d1",
-      person: "Budi",
-      amount: 500000,
-      type: "Piutang",
-      status: "Belum Lunas",
-      dueDate: "2026-05-15T00:00:00",
-      desc: "Patungan makan siang",
-    },
-    {
-      id: "d2",
-      person: "Andi",
-      amount: 250000,
-      type: "Hutang",
-      status: "Belum Lunas",
-      dueDate: "2026-05-10T00:00:00",
-      desc: "Pinjam untuk beli bensin",
-    }
-  ],
-  archives: [
-    {
-      id: "ar1",
-      name: "Kontrak Kerja PT. Tech",
-      category: "Pekerjaan",
-      docNumber: "CTR/2026/001",
-      date: "2026-01-15",
-      exp: "2027-01-15",
-      status: "Aktif",
-      important: true,
-      secret: true,
-    },
-    {
-      id: "ar2",
-      name: "Sertifikat Vaksin",
-      category: "Kesehatan",
-      docNumber: "VAC-9921",
-      date: "2021-08-10",
-      exp: "2026-08-10",
-      status: "Perlu Diperbarui",
-      important: false,
-      secret: false,
-    },
-  ],
-  notes: [
-    {
-      id: "n1",
-      title: "Ide Fitur Split Bill",
-      category: "Ide & Konsep",
-      date: "4 Mei 2026",
-      preview: "Tambahkan opsi pembagian tagihan otomatis dengan scan struk...",
-      color: "bg-amber-100 text-amber-700",
-    },
-    {
-      id: "n2",
-      title: "Daftar Belanja Bulanan",
-      category: "Pribadi",
-      date: "1 Mei 2026",
-      preview: "1. Susu cair\n2. Kopi bubuk\n3. Roti tawar...",
-      color: "bg-blue-100 text-blue-700",
-    },
-    {
-      id: "n3",
-      title: "Catatan Meeting Q2",
-      category: "Pekerjaan",
-      date: "28 Apr 2026",
-      preview:
-        "Target Q2: Meningkatkan retensi user sebesar 15%. Fokus pada onboar...",
-      color: "bg-purple-100 text-purple-700",
-    },
-    {
-      id: "n4",
-      title: "Daftar Tempat Liburan",
-      category: "Pribadi",
-      date: "20 Apr 2026",
-      preview: "- Bali (Canggu)\n- Jepang (Kyoto)\n- Lombok...",
-      color: "bg-emerald-100 text-emerald-700",
-    },
-  ],
+  pockets: [],
+  transactions: [],
+  budgets: [],
+  targets: [],
+  tasks: [],
+  activities: [],
+  debts: [],
+  archives: [],
+  notes: [],
 };
 
 // ==========================================
@@ -2165,7 +1801,7 @@ const FinanceView = ({ data }) => {
                   </Badge>
                 </div>
                 <div className="flex flex-col gap-2 border-t border-slate-100 pt-3">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-3">
                     <p className="text-[18px] font-black text-slate-900">
                       {formatCurrency(debt.amount)}
                     </p>
@@ -2173,6 +1809,7 @@ const FinanceView = ({ data }) => {
                       {debt.status}
                     </Badge>
                   </div>
+                  <ImageUploader collectionName="debts" docId={debt.id} currentUrl={debt.photoUrl} />
                 </div>
               </div>
             ))}
@@ -2815,41 +2452,44 @@ const RouteMap = ({
         </div>
       )}
 
-      {dailyActs.length === 0 ? (
-        <div className="flex-1 w-full h-full bg-[#eaf0f6] flex items-center justify-center">
-          <div className="bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm text-[10px] font-black uppercase tracking-widest text-slate-400 border border-slate-100 animate-in fade-in zoom-in-95">
-            Tidak ada rute{" "}
-            {timeFilter !== "Semua" ? timeFilter.toLowerCase() : ""} ini
-          </div>
-        </div>
-      ) : (
-        <div className="relative flex-1 w-full h-full">
-          <Map
-            center={[center.lng, center.lat]}
-            zoom={14}
-            attributionControl={false}
-            styles={useMemo(() => ({
-              light: getMapStyle(mapStyleType, false),
-              dark: getMapStyle(mapStyleType, true),
-            }), [mapStyleType])}
-          >
-            <MapController center={center} />
-            <DirectionsRendererComponent dailyActs={dailyActs} />
+      <div className="relative flex-1 w-full h-full">
+        <Map
+          center={[center.lng, center.lat]}
+          zoom={14}
+          attributionControl={false}
+          styles={useMemo(() => ({
+            light: getMapStyle(mapStyleType, false),
+            dark: getMapStyle(mapStyleType, true),
+          }), [mapStyleType])}
+        >
+          <MapController center={center} />
+          {dailyActs.length > 0 && <DirectionsRendererComponent dailyActs={dailyActs} />}
 
-            {userLocation && (
-              <MapMarker longitude={userLocation.lng} latitude={userLocation.lat}>
-                <MarkerContent>
-                  <div className="relative flex items-center justify-center">
-                    <div className="absolute w-10 h-10 bg-blue-500/20 rounded-full animate-ping" />
-                    <div className="w-5 h-5 bg-blue-600 rounded-full border-2 border-white shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] flex items-center justify-center">
-                      <div className="w-2 h-2 bg-white rounded-full" />
-                    </div>
+          {userLocation && (
+            <MapMarker longitude={userLocation.lng} latitude={userLocation.lat}>
+              <MarkerContent>
+                <div className="relative flex items-center justify-center">
+                  <div className="absolute w-10 h-10 bg-blue-500/20 rounded-full animate-ping" />
+                  <div className="w-5 h-5 bg-blue-600 rounded-full border-2 border-white shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full" />
                   </div>
-                </MarkerContent>
-              </MapMarker>
-            )}
+                </div>
+              </MarkerContent>
+            </MapMarker>
+          )}
 
-            {dailyActs.map((act) => {
+          {dailyActs.length === 0 && (
+            <div className="absolute inset-0 z-[10] flex items-center justify-center pointer-events-none bg-black/5 backdrop-blur-[1px]">
+              <div className="bg-white/90 backdrop-blur-md px-6 py-3 rounded-full shadow-lg border border-slate-200/60 animate-in fade-in zoom-in-95 flex items-center gap-2 pointer-events-auto">
+                <MapPin size={16} className="text-slate-400" />
+                <span className="text-[12px] font-black text-slate-500 tracking-wide">
+                  Tidak ada rute {timeFilter !== "Semua" ? timeFilter.toLowerCase() : "hari"} ini
+                </span>
+              </div>
+            </div>
+          )}
+
+          {dailyActs.map((act) => {
               const isFocused = focusedLocation?.lat === act.lat && focusedLocation?.lng === act.lng;
               const markerColor = act.color.includes('blue') ? 'bg-blue-500' :
                 act.color.includes('orange') ? 'bg-orange-500' :
@@ -2908,7 +2548,6 @@ const RouteMap = ({
             })}
           </Map>
         </div>
-      )}
     </div>
   );
 };
@@ -4018,6 +3657,7 @@ const AddModal = ({ isOpen, onClose, user, activeTab }) => {
   const [actLocation, setActLocation] = useState("");
   const [actType, setActType] = useState("Pekerjaan");
   const [actTransport, setActTransport] = useState("Mobil");
+  const [actDesc, setActDesc] = useState("");
 
   // Debt fields
   const [debtPerson, setDebtPerson] = useState("");
@@ -4025,9 +3665,33 @@ const AddModal = ({ isOpen, onClose, user, activeTab }) => {
   const [debtType, setDebtType] = useState("Hutang");
   const [debtDueDate, setDebtDueDate] = useState(new Date().toISOString().slice(0,10));
 
+  // Task fields
+  const [taskTitle, setTaskTitle] = useState("");
+  const [taskPriority, setTaskPriority] = useState("Sedang");
+  const [taskDate, setTaskDate] = useState(new Date().toISOString().slice(0,10));
+  const [taskTime, setTaskTime] = useState("09:00");
+  const [taskCategory, setTaskCategory] = useState("Pekerjaan");
+  const [taskDesc, setTaskDesc] = useState("");
+
+  // Note fields
+  const [noteTitle, setNoteTitle] = useState("");
+  const [noteContent, setNoteContent] = useState("");
+
+  // Budget fields
+  const [budgetTitle, setBudgetTitle] = useState("");
+  const [budgetAmount, setBudgetAmount] = useState("");
+  const [budgetCategory, setBudgetCategory] = useState("Pribadi");
+
   useEffect(() => {
     if(isOpen) {
       setType('selection');
+      // Reset forms
+      setTrxTitle(""); setTrxAmount(""); setTrxType("expense"); setTrxCategory("Makanan");
+      setActTitle(""); setActLocation(""); setActDesc("");
+      setDebtPerson(""); setDebtAmount("");
+      setTaskTitle(""); setTaskDesc("");
+      setNoteTitle(""); setNoteContent("");
+      setBudgetTitle(""); setBudgetAmount("");
     }
   }, [isOpen]);
 
@@ -4067,7 +3731,7 @@ const AddModal = ({ isOpen, onClose, user, activeTab }) => {
           timeEnd: actTimeEnd,
           location: actLocation,
           type: actType,
-          desc: "",
+          desc: actDesc,
           lat: -6.2235 + (Math.random() * 0.02 - 0.01), // dummy offsets
           lng: 106.8228 + (Math.random() * 0.02 - 0.01),
           dateInt: new Date().getDate(),
@@ -4086,6 +3750,49 @@ const AddModal = ({ isOpen, onClose, user, activeTab }) => {
           status: "Belum Lunas",
           dueDate: new Date(debtDueDate).toISOString(),
           desc: "Pinjaman/Tagihan",
+          createdAt: serverTimestamp(),
+        });
+      } else if (type === 'task') {
+        if(!taskTitle) return;
+        const selectedDate = new Date(taskDate);
+        await addDoc(collection(db, "tasks"), {
+          userId: user.uid,
+          title: taskTitle,
+          status: "belum",
+          priority: taskPriority.toLowerCase(),
+          category: taskCategory,
+          desc: taskDesc,
+          date: selectedDate.toISOString(),
+          dateInt: selectedDate.getDate(),
+          time: taskTime,
+          isToday: selectedDate.toDateString() === new Date().toDateString(),
+          createdAt: serverTimestamp(),
+        });
+      } else if (type === 'note') {
+        if(!noteTitle) return;
+        await addDoc(collection(db, "notes"), {
+          userId: user.uid,
+          title: noteTitle,
+          content: noteContent,
+          createdAt: serverTimestamp(),
+        });
+      } else if (type === 'budget') {
+        if(!budgetTitle || !budgetAmount) return;
+        let color = "text-blue-500";
+        let bg = "bg-blue-50";
+        if(budgetCategory === "Konsumsi") { color = "text-orange-500"; bg = "bg-orange-50"; }
+        if(budgetCategory === "Transport") { color = "text-violet-500"; bg = "bg-violet-50"; }
+        await addDoc(collection(db, "budgets"), {
+          userId: user.uid,
+          name: budgetTitle,
+          category: budgetCategory,
+          amount: parseFloat(budgetAmount),
+          limit: parseFloat(budgetAmount),
+          spent: 0,
+          period: "Bulan Ini",
+          color,
+          bg,
+          icon: "pie-chart",
           createdAt: serverTimestamp(),
         });
       }
@@ -4110,7 +3817,7 @@ const AddModal = ({ isOpen, onClose, user, activeTab }) => {
               </button>
             )}
             <h3 className="text-[16px] font-black text-slate-900">
-              {type === 'selection' ? "Tambah Data" : type === 'transaction' ? "Tambah Transaksi" : type === 'activity' ? "Tambah Aktivitas" : type === 'debt' ? "Tambah Hutang/Piutang" : "Tambah Data"}
+              {type === 'selection' ? "Tambah Data" : type === 'transaction' && trxType === 'income' ? "Tambah Pemasukan" : type === 'transaction' && trxType === 'expense' ? "Tambah Pengeluaran" : type === 'activity' ? "Tambah Aktivitas" : type === 'debt' ? "Tambah Hutang/Piutang" : type === 'task' ? "Tambah Tugas" : type === 'note' ? "Tambah Catatan" : type === 'budget' ? "Buat Budget" : "Tambah Data"}
             </h3>
           </div>
           <button onClick={onClose} className="w-8 h-8 bg-slate-100 text-slate-500 rounded-full flex items-center justify-center">
@@ -4121,23 +3828,47 @@ const AddModal = ({ isOpen, onClose, user, activeTab }) => {
         <div className="p-4 overflow-y-auto max-h-[70vh]">
           {type === 'selection' ? (
             <div className="grid grid-cols-2 gap-3 pb-4">
-              <button onClick={() => setType('transaction')} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex flex-col items-center gap-2 group">
-                <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Wallet size={24} />
-                </div>
-                <span className="text-[13px] font-black text-slate-800">Transaksi</span>
-              </button>
-              <button onClick={() => setType('activity')} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-emerald-400 hover:shadow-md transition-all flex flex-col items-center gap-2 group">
+              <button onClick={() => { setType('transaction'); setTrxType('income'); }} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-emerald-400 hover:shadow-md transition-all flex flex-col items-center gap-2 group">
                 <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Calendar size={24} />
+                  <TrendingUp size={24} />
                 </div>
-                <span className="text-[13px] font-black text-slate-800">Aktivitas</span>
+                <span className="text-[13px] font-black text-slate-800">Pemasukan</span>
               </button>
-              <button onClick={() => setType('debt')} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-rose-400 hover:shadow-md transition-all flex flex-col items-center gap-2 group">
+              <button onClick={() => { setType('transaction'); setTrxType('expense'); }} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-rose-400 hover:shadow-md transition-all flex flex-col items-center gap-2 group">
                 <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <TrendingDown size={24} />
+                </div>
+                <span className="text-[13px] font-black text-slate-800">Pengeluaran</span>
+              </button>
+              <button onClick={() => setType('debt')} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex flex-col items-center gap-2 group">
+                <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Users size={24} />
                 </div>
                 <span className="text-[13px] font-black text-slate-800">Hutang/Piutang</span>
+              </button>
+              <button onClick={() => setType('budget')} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-purple-400 hover:shadow-md transition-all flex flex-col items-center gap-2 group">
+                <div className="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Target size={24} />
+                </div>
+                <span className="text-[13px] font-black text-slate-800">Budget</span>
+              </button>
+              <button onClick={() => setType('activity')} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex flex-col items-center gap-2 group">
+                <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <CalendarIcon size={24} />
+                </div>
+                <span className="text-[13px] font-black text-slate-800">Aktivitas</span>
+              </button>
+              <button onClick={() => setType('task')} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-amber-400 hover:shadow-md transition-all flex flex-col items-center gap-2 group">
+                <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <CheckSquare size={24} />
+                </div>
+                <span className="text-[13px] font-black text-slate-800">Tugas</span>
+              </button>
+              <button onClick={() => setType('note')} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:border-teal-400 hover:shadow-md transition-all flex flex-col items-center gap-2 group col-span-2">
+                <div className="w-12 h-12 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <StickyNote size={24} />
+                </div>
+                <span className="text-[13px] font-black text-slate-800">Catatan</span>
               </button>
             </div>
           ) : (
@@ -4212,6 +3943,10 @@ const AddModal = ({ isOpen, onClose, user, activeTab }) => {
                     </select>
                   </div>
                 </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] font-bold text-slate-700">Deskripsi Aktivitas</label>
+                  <textarea value={actDesc} onChange={e => setActDesc(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[14px] outline-none focus:border-blue-500 min-h-[80px]" placeholder="Misal: Bertemu klien baru"></textarea>
+                </div>
               </>
             )}
 
@@ -4237,6 +3972,49 @@ const AddModal = ({ isOpen, onClose, user, activeTab }) => {
                     <label className="text-[12px] font-bold text-slate-700">Jatuh Tempo</label>
                     <input type="date" value={debtDueDate} onChange={e => setDebtDueDate(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-3 py-3 text-[14px] outline-none focus:border-blue-500" />
                   </div>
+                </div>
+              </>
+            )}
+
+            {type === 'task' && (
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] font-bold text-slate-700">Nama Tugas</label>
+                  <input required value={taskTitle} onChange={e => setTaskTitle(e.target.value)} type="text" className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[14px] outline-none focus:border-blue-500" placeholder="Contoh: Beli Kopi" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] font-bold text-slate-700">Prioritas</label>
+                  <select value={taskPriority} onChange={e => setTaskPriority(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-3 py-3 text-[14px] outline-none focus:border-blue-500">
+                    <option value="Tinggi">Tinggi</option>
+                    <option value="Sedang">Sedang</option>
+                    <option value="Rendah">Rendah</option>
+                  </select>
+                </div>
+              </>
+            )}
+
+            {type === 'budget' && (
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] font-bold text-slate-700">Nama Budget</label>
+                  <input required value={budgetTitle} onChange={e => setBudgetTitle(e.target.value)} type="text" className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[14px] outline-none focus:border-blue-500" placeholder="Contoh: Liburan" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] font-bold text-slate-700">Batas (Rp)</label>
+                  <input required value={budgetAmount} onChange={e => setBudgetAmount(e.target.value)} type="number" className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[14px] outline-none focus:border-blue-500" placeholder="50000" />
+                </div>
+              </>
+            )}
+
+            {type === 'note' && (
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] font-bold text-slate-700">Judul Catatan</label>
+                  <input required value={noteTitle} onChange={e => setNoteTitle(e.target.value)} type="text" className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[14px] outline-none focus:border-blue-500" placeholder="Contoh: Ide Bisnis" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] font-bold text-slate-700">Isi Catatan</label>
+                  <textarea required value={noteContent} onChange={e => setNoteContent(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[14px] outline-none focus:border-blue-500 min-h-[100px]" placeholder="Deskripsi..." />
                 </div>
               </>
             )}
@@ -4371,7 +4149,32 @@ const useFirebaseData = (user: FirebaseUser | null) => {
     };
   }, [user]);
 
-  return { data, loading };
+  const computedSummary = useMemo(() => {
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    
+    let incomeMonth = 0;
+    let expenseMonth = 0;
+
+    data.transactions.forEach(trx => {
+      let d = new Date();
+      if(trx.createdAt?.toDate) d = trx.createdAt.toDate();
+      else if(trx.date) d = new Date(trx.date);
+
+      if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+        if(trx.type === 'income') incomeMonth += trx.amount;
+        if(trx.type === 'expense') expenseMonth += trx.amount;
+      }
+    });
+
+    return {
+      ...data.summary,
+      incomeMonth,
+      expenseMonth,
+    };
+  }, [data.transactions, data.summary]);
+
+  return { data: { ...data, summary: computedSummary }, loading };
 };
 
 
