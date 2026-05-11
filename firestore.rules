@@ -1,0 +1,157 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 1. Primitive Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn();
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 2. Entity Validators
+    function isValidUser(data) {
+      return data.keys().hasAll(['name', 'email']) &&
+             data.name is string && data.name.size() <= 100 &&
+             data.email is string && data.email.size() <= 100;
+    }
+
+    function isValidPocket(data) {
+      return data.keys().hasAll(['name', 'balance', 'userId']) &&
+             data.name is string && data.name.size() <= 100 &&
+             data.balance is number &&
+             data.userId == request.auth.uid;
+    }
+
+    function isValidTransaction(data) {
+      return data.keys().hasAll(['title', 'amount', 'type', 'dateInt', 'userId']) &&
+             data.title is string && data.title.size() <= 200 &&
+             data.amount is number &&
+             data.type in ['income', 'expense', 'transfer'] &&
+             data.userId == request.auth.uid;
+    }
+
+    function isValidTask(data) {
+      return data.keys().hasAll(['title', 'status', 'userId']) &&
+             data.title is string && data.title.size() <= 200 &&
+             data.status in ['belum', 'proses', 'selesai'] &&
+             data.userId == request.auth.uid;
+    }
+
+    function isValidActivity(data) {
+      return data.keys().hasAll(['title', 'timeStart', 'userId']) &&
+             data.title is string && data.title.size() <= 200 &&
+             data.userId == request.auth.uid;
+    }
+
+    // 3. Collection Rules
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isVerified() && isValidUser(incoming());
+      allow update: if isOwner(userId) && isVerified() && isValidUser(incoming()) &&
+                      incoming().email == existing().email;
+    }
+
+    match /pockets/{pocketId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isVerified() && isValidPocket(incoming());
+      allow update: if isVerified() && existing().userId == request.auth.uid && 
+                      isValidPocket(incoming()) &&
+                      incoming().userId == existing().userId;
+      allow delete: if isVerified() && existing().userId == request.auth.uid;
+    }
+
+    match /transactions/{txId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isVerified() && isValidTransaction(incoming());
+      allow update: if isVerified() && existing().userId == request.auth.uid && 
+                      isValidTransaction(incoming()) &&
+                      incoming().userId == existing().userId;
+      allow delete: if isVerified() && existing().userId == request.auth.uid;
+    }
+
+    match /budgets/{budgetId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isVerified() && incoming().userId == request.auth.uid;
+      allow update: if isVerified() && existing().userId == request.auth.uid && incoming().userId == existing().userId;
+      allow delete: if isVerified() && existing().userId == request.auth.uid;
+    }
+
+    match /targets/{targetId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isVerified() && incoming().userId == request.auth.uid;
+      allow update: if isVerified() && existing().userId == request.auth.uid && incoming().userId == existing().userId;
+      allow delete: if isVerified() && existing().userId == request.auth.uid;
+    }
+
+    match /tasks/{taskId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isVerified() && isValidTask(incoming());
+      allow update: if isVerified() && existing().userId == request.auth.uid && 
+                      isValidTask(incoming()) &&
+                      incoming().userId == existing().userId;
+      allow delete: if isVerified() && existing().userId == request.auth.uid;
+    }
+
+    match /activities/{activityId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isVerified() && isValidActivity(incoming());
+      allow update: if isVerified() && existing().userId == request.auth.uid && 
+                      isValidActivity(incoming()) &&
+                      incoming().userId == existing().userId;
+      allow delete: if isVerified() && existing().userId == request.auth.uid;
+    }
+
+    match /archives/{archiveId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isVerified() && incoming().userId == request.auth.uid;
+      allow update: if isVerified() && existing().userId == request.auth.uid && incoming().userId == existing().userId;
+      allow delete: if isVerified() && existing().userId == request.auth.uid;
+    }
+
+    match /notes/{noteId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isVerified() && incoming().userId == request.auth.uid;
+      allow update: if isVerified() && existing().userId == request.auth.uid && incoming().userId == existing().userId;
+      allow delete: if isVerified() && existing().userId == request.auth.uid;
+    }
+
+    match /debts/{debtId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isVerified() && incoming().userId == request.auth.uid;
+      allow update: if isVerified() && existing().userId == request.auth.uid && incoming().userId == existing().userId;
+      allow delete: if isVerified() && existing().userId == request.auth.uid;
+    }
+  }
+}

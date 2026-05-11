@@ -1,0 +1,198 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User profile information and settings",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "job": { "type": "string" },
+        "avatar": { "type": "string" },
+        "tier": { "type": "string" }
+      }
+    },
+    "Pocket": {
+      "title": "Financial Pocket",
+      "description": "Account or wallet for storing money",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "balance": { "type": "number" },
+        "in": { "type": "number" },
+        "out": { "type": "number" },
+        "trxCount": { "type": "number" },
+        "lastTrx": { "type": "string" },
+        "status": { "type": "string" },
+        "color": { "type": "string" },
+        "bg": { "type": "string" },
+        "icon": { "type": "string" },
+        "userId": { "type": "string" }
+      },
+      "required": ["name", "balance", "userId"]
+    },
+    "Transaction": {
+      "title": "Financial Transaction",
+      "description": "Record of income or expense",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "amount": { "type": "number" },
+        "type": { "type": "string", "enum": ["income", "expense", "transfer"] },
+        "date": { "type": "string", "format": "date-time" },
+        "time": { "type": "string" },
+        "category": { "type": "string" },
+        "method": { "type": "string" },
+        "pocket": { "type": "string" },
+        "icon": { "type": "string" },
+        "important": { "type": "boolean" },
+        "dateInt": { "type": "integer" },
+        "routine": { "type": "boolean" },
+        "photoUrl": { "type": "string" },
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "amount", "type", "date", "userId"]
+    },
+    "Budget": {
+      "title": "Monthly Budget",
+      "description": "Spending limit for a category",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "spent": { "type": "number" },
+        "limit": { "type": "number" },
+        "period": { "type": "string" },
+        "color": { "type": "string" },
+        "bg": { "type": "string" },
+        "icon": { "type": "string" },
+        "userId": { "type": "string" }
+      },
+      "required": ["name", "limit", "userId"]
+    },
+    "Target": {
+      "title": "Financial Target",
+      "description": "Savings goal",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "target": { "type": "number" },
+        "current": { "type": "number" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "status": { "type": "string" },
+        "pocket": { "type": "string" },
+        "userId": { "type": "string" }
+      },
+      "required": ["name", "target", "userId"]
+    },
+    "Task": {
+      "title": "Daily Task",
+      "description": "Task representing a to-do item",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "time": { "type": "string" },
+        "status": { "type": "string", "enum": ["belum", "proses", "selesai"] },
+        "priority": { "type": "string", "enum": ["rendah", "sedang", "tinggi", "mendesak"] },
+        "category": { "type": "string" },
+        "desc": { "type": "string" },
+        "dateInt": { "type": "integer" },
+        "userId": { "type": "string" }
+      },
+      "required": ["title", "status", "userId"]
+    },
+    "Activity": {
+      "title": "Activity",
+      "description": "Location-based activity itinerary",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "timeStart": { "type": "string" },
+        "timeEnd": { "type": "string" },
+        "location": { "type": "string" },
+        "type": { "type": "string" },
+        "desc": { "type": "string" },
+        "color": { "type": "string" },
+        "dateInt": { "type": "integer" },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "photoUrl": { "type": "string" },
+        "userId": { "type": "string" }
+      },
+      "required": ["title", "timeStart", "userId"]
+    },
+    "Archive": {
+      "title": "Document Archive",
+      "description": "Stored documents and certificates",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "docNumber": { "type": "string" },
+        "date": { "type": "string" },
+        "exp": { "type": "string" },
+        "status": { "type": "string" },
+        "important": { "type": "boolean" },
+        "secret": { "type": "boolean" },
+        "userId": { "type": "string" }
+      },
+      "required": ["name", "userId"]
+    },
+    "Note": {
+      "title": "Personal Note",
+      "description": "Ideas and notes",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "date": { "type": "string" },
+        "preview": { "type": "string" },
+        "color": { "type": "string" },
+        "userId": { "type": "string" }
+      },
+      "required": ["title", "userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile data"
+    },
+    "/pockets": {
+      "schema": "Pocket",
+      "description": "Financial pockets"
+    },
+    "/transactions": {
+      "schema": "Transaction",
+      "description": "Financial transactions"
+    },
+    "/budgets": {
+      "schema": "Budget",
+      "description": "Monthly budgets"
+    },
+    "/targets": {
+      "schema": "Target",
+      "description": "Financial goals"
+    },
+    "/tasks": {
+      "schema": "Task",
+      "description": "Daily to-do tasks"
+    },
+    "/activities": {
+      "schema": "Activity",
+      "description": "User activity itinerary"
+    },
+    "/archives": {
+      "schema": "Archive",
+      "description": "Document archives"
+    },
+    "/notes": {
+      "schema": "Note",
+      "description": "Personal notes"
+    }
+  }
+}
