@@ -1119,6 +1119,80 @@ const FinanceView = ({ data }) => {
     return monthData;
   }, [data.transactions]);
 
+  const chartTrendData = useMemo(() => {
+    const days = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+    const todayObj = new Date();
+    // get last 7 days including today
+    const res = [];
+    for(let i=6; i>=0; i--) {
+      const d = new Date(todayObj);
+      d.setDate(d.getDate() - i);
+      res.push({
+        dateStr: d.toDateString(),
+        name: days[d.getDay()],
+        in: 0,
+        out: 0
+      });
+    }
+
+    data.transactions.forEach(t => {
+      let dObj = new Date();
+      if (t.createdAt && t.createdAt.toDate) {
+        dObj = t.createdAt.toDate();
+      } else if (t.date) {
+        dObj = new Date(t.date);
+      }
+      const item = res.find(r => r.dateStr === dObj.toDateString());
+      if(item) {
+        if(t.type === 'income') item.in += t.amount;
+        if(t.type === 'expense') item.out += t.amount;
+      }
+    });
+    return res;
+  }, [data.transactions]);
+
+  const chartPieData = useMemo(() => {
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    const expensesByCategory: Record<string, number> = {};
+    
+    data.transactions.forEach(t => {
+      if(t.type !== 'expense') return;
+      let dObj = new Date();
+      if (t.createdAt && t.createdAt.toDate) dObj = t.createdAt.toDate();
+      else if (t.date) dObj = new Date(t.date);
+
+      if(dObj.getMonth() === currentMonth && dObj.getFullYear() === currentYear) {
+        expensesByCategory[t.category] = (expensesByCategory[t.category] || 0) + t.amount;
+      }
+    });
+
+    const colors = ["#f97316", "#3b82f6", "#f43f5e", "#8b5cf6", "#94a3b8", "#10b981", "#eab308"];
+    const total = Object.values(expensesByCategory).reduce((sum, val) => sum + val, 0);
+    
+    let chartData = Object.entries(expensesByCategory).map(([name, value], index) => ({
+      name,
+      value,
+      color: colors[index % colors.length],
+      pct: total > 0 ? Math.round((value / total) * 100) : 0
+    }));
+
+    if(chartData.length === 0) {
+      chartData = [{ name: "Belum Ada", value: 1, color: "#e2e8f0", pct: 0 }];
+    }
+
+    return chartData;
+  }, [data.transactions]);
+
+  const chartBarData = useMemo(() => {
+    return data.budgets.map(b => ({
+      name: b.name,
+      budget: b.limit,
+      actual: b.spent || 0
+    }));
+  }, [data.budgets]);
+
+
   return (
     <div className="pb-32">
       <div className="px-5 pt-6 mb-6">
@@ -1846,15 +1920,7 @@ const FinanceView = ({ data }) => {
               <div className="h-[200px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
-                    data={[
-                      { name: "Sen", in: 1200000, out: 800000 },
-                      { name: "Sel", in: 900000, out: 1200000 },
-                      { name: "Rab", in: 2500000, out: 950000 },
-                      { name: "Kam", in: 1500000, out: 1100000 },
-                      { name: "Jum", in: 1800000, out: 1300000 },
-                      { name: "Sab", in: 800000, out: 2000000 },
-                      { name: "Min", in: 3000000, out: 1100000 },
-                    ]}
+                    data={chartTrendData}
                   >
                     <defs>
                       <linearGradient id="colorIn" x1="0" y1="0" x2="0" y2="1">
@@ -1949,13 +2015,7 @@ const FinanceView = ({ data }) => {
                 <ResponsiveContainer width="100%" height="100%">
                   <RePieChart>
                     <Pie
-                      data={[
-                        { name: "Makan", value: 450000, color: "#f97316" },
-                        { name: "Belanja", value: 1250000, color: "#3b82f6" },
-                        { name: "Tagihan", value: 2500000, color: "#f43f5e" },
-                        { name: "Transport", value: 300000, color: "#8b5cf6" },
-                        { name: "Lainnya", value: 150000, color: "#94a3b8" },
-                      ]}
+                      data={chartPieData}
                       cx="50%"
                       cy="50%"
                       innerRadius={60}
@@ -1963,61 +2023,37 @@ const FinanceView = ({ data }) => {
                       paddingAngle={8}
                       dataKey="value"
                     >
-                      {[
-                        { name: "Makan", value: 450000, color: "#f97316" },
-                        { name: "Belanja", value: 1250000, color: "#3b82f6" },
-                        { name: "Tagihan", value: 2500000, color: "#f43f5e" },
-                        { name: "Transport", value: 300000, color: "#8b5cf6" },
-                        { name: "Lainnya", value: 150000, color: "#94a3b8" },
-                      ].map((entry, index) => (
+                      {chartPieData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip formatter={(value) => formatCurrency(value)} />
                   </RePieChart>
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-2">
                   <p className="text-[10px] font-bold text-slate-400 uppercase leading-none">
                     Total
                   </p>
-                  <p className="text-[18px] font-black text-slate-900 leading-tight">
-                    Rp 4.6jt
+                  <p className="text-[16px] font-black text-slate-900 leading-tight mt-1">
+                    {formatCompactCurrency(
+                      chartPieData.reduce((sum, item) => sum + (item.name !== "Belum Ada" ? item.value : 0), 0)
+                    )}
                   </p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-y-2 mt-2">
-                {[
-                  { name: "Makan", value: 450000, color: "#f97316", pct: 10 },
-                  {
-                    name: "Belanja",
-                    value: 1250000,
-                    color: "#3b82f6",
-                    pct: 27,
-                  },
-                  {
-                    name: "Tagihan",
-                    value: 2500000,
-                    color: "#f43f5e",
-                    pct: 54,
-                  },
-                  {
-                    name: "Transport",
-                    value: 300000,
-                    color: "#8b5cf6",
-                    pct: 7,
-                  },
-                ].map((item, i) => (
+                {chartPieData.map((item, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <div
                       className="w-2 h-2 rounded-full"
                       style={{ backgroundColor: item.color }}
                     ></div>
-                    <p className="text-[11px] font-bold text-slate-600">
-                      {item.name}{" "}
-                      <span className="text-slate-400 font-medium ml-1">
-                        {item.pct}%
-                      </span>
+                    <p className="text-[11px] font-bold text-slate-600 truncate min-w-0" title={item.name}>
+                      {item.name}
                     </p>
+                    <span className="text-slate-400 font-medium ml-1 text-[10px] shrink-0">
+                      {item.pct}%
+                    </span>
                   </div>
                 ))}
               </div>
@@ -2031,11 +2067,7 @@ const FinanceView = ({ data }) => {
               <div className="h-[200px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
-                    data={[
-                      { name: "Makan", budget: 2000000, actual: 1800000 },
-                      { name: "Trans", budget: 1000000, actual: 400000 },
-                      { name: "Tagihan", budget: 2500000, actual: 2600000 },
-                    ]}
+                    data={chartBarData}
                     layout="vertical"
                     margin={{ left: 0, right: 30 }}
                   >
@@ -2048,7 +2080,7 @@ const FinanceView = ({ data }) => {
                       tick={{ fontSize: 10, fontWeight: 700, fill: "#64748b" }}
                       width={60}
                     />
-                    <Tooltip cursor={{ fill: "transparent" }} />
+                    <Tooltip cursor={{ fill: "transparent" }} formatter={(val) => formatCurrency(val)} />
                     <Bar
                       dataKey="budget"
                       fill="#e2e8f0"
