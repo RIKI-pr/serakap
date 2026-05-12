@@ -61,6 +61,7 @@ import {
   CheckSquare,
   StickyNote,
   Calendar,
+  TriangleAlert,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -98,6 +99,7 @@ import {
   doc,
   setDoc,
   getDoc,
+  getDocs,
   serverTimestamp,
   orderBy,
 } from "firebase/firestore";
@@ -201,62 +203,67 @@ const IconRenderer = ({ name, size = 20, className = "" }) => {
 };
 
 // Header
-const AppHeader = ({ user, title, onBack, onProfileClick }: any) => (
-  <header className="sticky top-0 w-full bg-slate-50/90 backdrop-blur-xl px-5 sm:px-6 py-4 flex justify-between items-center z-40 border-b border-slate-200/60 transition-all">
-    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-      {title ? (
-        <button
-          onClick={onBack}
-          className="p-2 -ml-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 rounded-full active:scale-95 transition-all shrink-0"
-        >
-          <ChevronLeft size={22} />
-        </button>
-      ) : (
-        <button className="p-2 -ml-2 opacity-0 pointer-events-none w-0 overflow-hidden shrink-0">
-          <ChevronLeft size={22} />
-        </button>
-      )}
-
-      {title ? (
-        <h1 className="text-[17px] sm:text-[18px] font-black text-slate-900 leading-tight tracking-tight truncate">
-          {title}
-        </h1>
-      ) : (
-        <>
-          <div
-            onClick={onProfileClick}
-            className="w-10 h-10 rounded-full overflow-hidden shadow-sm border border-slate-200 shrink-0 cursor-pointer hover:border-slate-300 transition-colors"
+const AppHeader = ({ user, title, onBack, onProfileClick }: any) => {
+  const currentMonthName = new Date().toLocaleDateString("id-ID", { month: "long" });
+  const currentYear = new Date().getFullYear();
+  
+  return (
+    <header className="sticky top-0 w-full bg-slate-50/90 backdrop-blur-xl px-5 sm:px-6 py-4 flex justify-between items-center z-40 border-b border-slate-200/60 transition-all">
+      <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+        {title ? (
+          <button
+            onClick={onBack}
+            className="p-2 -ml-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 rounded-full active:scale-95 transition-all shrink-0"
           >
-            <img
-              src={user.avatar}
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="flex flex-col justify-center min-w-0 pr-2">
-            <p className="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-tight mb-0.5 truncate">
-              Welcome back
-            </p>
-            <p className="text-[13px] sm:text-[14px] font-black text-slate-900 leading-tight truncate">
-              {user.name}
-            </p>
-          </div>
-        </>
-      )}
-    </div>
-    <div className="flex gap-2 shrink-0">
-      {!title && (
-        <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-slate-600 shadow-sm border border-slate-200 hover:bg-slate-50 active:scale-95 transition-all">
-          <Search size={18} strokeWidth={2.5} />
+            <ChevronLeft size={22} />
+          </button>
+        ) : (
+          <button className="p-2 -ml-2 opacity-0 pointer-events-none w-0 overflow-hidden shrink-0">
+            <ChevronLeft size={22} />
+          </button>
+        )}
+
+        {title ? (
+          <h1 className="text-[17px] sm:text-[18px] font-black text-slate-900 leading-tight tracking-tight truncate">
+            {title}
+          </h1>
+        ) : (
+          <>
+            <div
+              onClick={onProfileClick}
+              className="w-10 h-10 rounded-full overflow-hidden shadow-sm border border-slate-200 shrink-0 cursor-pointer hover:border-slate-300 transition-colors"
+            >
+              <img
+                src={user.avatar}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col justify-center min-w-0 pr-2">
+              <p className="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-tight mb-0.5 truncate">
+                Welcome back
+              </p>
+              <p className="text-[13px] sm:text-[14px] font-black text-slate-900 leading-tight truncate">
+                {user.name}
+              </p>
+            </div>
+          </>
+        )}
+      </div>
+      <div className="flex gap-2 shrink-0">
+        {!title && (
+          <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-slate-600 shadow-sm border border-slate-200 hover:bg-slate-50 active:scale-95 transition-all">
+            <Search size={18} strokeWidth={2.5} />
+          </button>
+        )}
+        <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-slate-600 shadow-sm border border-slate-200 hover:bg-slate-50 active:scale-95 transition-all relative">
+          <Bell size={18} strokeWidth={2.5} />
+          <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white shadow-sm"></span>
         </button>
-      )}
-      <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-slate-600 shadow-sm border border-slate-200 hover:bg-slate-50 active:scale-95 transition-all relative">
-        <Bell size={18} strokeWidth={2.5} />
-        <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white shadow-sm"></span>
-      </button>
-    </div>
-  </header>
-);
+      </div>
+    </header>
+  );
+};
 
 const SectionHeader = ({ title, action, onAction, subtitle }: any) => (
   <div className="flex justify-between items-end mb-4 mt-8 px-1 gap-4">
@@ -470,9 +477,11 @@ const DailyDateSelector = ({
       {isOpen && (
         <div className="bg-white border border-slate-200 rounded-[20px] p-4 shadow-[0_2px_10px_rgba(0,0,0,0.02)] animate-in fade-in slide-in-from-top-2 duration-200 w-full mt-1">
           <div className="flex justify-between items-center mb-4 px-2 border-b border-slate-100 pb-3">
-            <h4 className="text-[14px] font-black text-slate-900">Mei 2026</h4>
+            <h4 className="text-[14px] font-black text-slate-900">
+              {new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" })}
+            </h4>
             <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
-              Hari Ini: Tgl 4
+              Hari Ini: Tgl {new Date().getDate()}
             </span>
           </div>
           <div className="grid grid-cols-7 gap-y-2 mb-4">
@@ -497,6 +506,8 @@ const DailyDateSelector = ({
 const HomeView = ({ data }) => {
   const totalBalance = data.pockets.reduce((sum, p) => sum + p.balance, 0);
   const tasksPending = data.tasks.filter((a) => a.status !== "selesai").length;
+  const currentMonthName = new Date().toLocaleDateString("id-ID", { month: "long" });
+  const currentYear = new Date().getFullYear();
 
   return (
     <div className="pb-32">
@@ -507,7 +518,7 @@ const HomeView = ({ data }) => {
         <p className="text-[14px] font-medium text-slate-600 mt-1 leading-relaxed">
           Ada{" "}
           <b className="text-blue-600">
-            {data.activities.filter((a) => a.dateInt === 4).length} aktivitas
+            {data.activities.filter((a) => a.isToday).length} aktivitas
           </b>{" "}
           dan{" "}
           <b className="text-emerald-600">
@@ -527,14 +538,8 @@ const HomeView = ({ data }) => {
           <div className="relative z-10">
             <div className="flex justify-between items-center mb-4 gap-4">
               <button className="bg-white/20 hover:bg-white/30 active:scale-95 transition-all backdrop-blur-md text-white border border-white/20 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-bold shadow-sm">
-                <CalendarIcon size={14} /> Mei 2026 <ChevronDown size={14} />
+                <CalendarIcon size={14} /> {currentMonthName} {currentYear} <ChevronDown size={14} />
               </button>
-              <Badge
-                variant="default"
-                className="shrink-0 mt-1 bg-white text-emerald-600 border border-emerald-100 shadow-sm px-2.5 py-1 tracking-wide font-black"
-              >
-                +12% vs Apr
-              </Badge>
             </div>
             <div className="mb-5">
               <p className="text-blue-100 text-[13px] font-medium mb-1 tracking-wide truncate flex items-center gap-1.5">
@@ -543,9 +548,11 @@ const HomeView = ({ data }) => {
               <h2 className="text-[32px] sm:text-[38px] font-black tracking-tight leading-none text-white break-all sm:break-normal drop-shadow-sm">
                 {formatCurrency(totalBalance)}
               </h2>
-              <p className="text-blue-200 text-[11px] font-medium mt-1.5">
-                Kekayaan Bulan Lalu: {formatCurrency(totalBalance * 0.88)}
-              </p>
+              {totalBalance > 0 && (
+                <p className="text-blue-200 text-[11px] font-medium mt-1.5">
+                  Update real-time dari {data.pockets.length} kantong aktif.
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4 pt-5 pb-5 border-t border-blue-400/30">
@@ -609,96 +616,62 @@ const HomeView = ({ data }) => {
             subtitle="Tempat menyimpan uang Anda"
           />
         </div>
-        <div className="flex overflow-x-auto gap-4 px-5 pb-4 hide-scrollbar snap-x">
-          {data.pockets.map((pocket) => (
-            <div
-              key={pocket.id}
-              className="snap-start shrink-0 w-[290px] bg-white rounded-[24px] p-5 border border-slate-200 shadow-[0_4px_16px_rgba(0,0,0,0.03)] flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={cn(
-                        "w-12 h-12 rounded-full flex items-center justify-center",
-                        pocket.bg,
-                        pocket.color,
-                      )}
+        <div className="flex overflow-x-auto gap-4 px-6 pb-6 hide-scrollbar">
+          {data.pockets.length > 0 ? (
+            data.pockets.map((pocket) => (
+              <div
+                key={pocket.id}
+                className="shrink-0 w-[290px] bg-white rounded-[24px] p-5 border border-slate-200 shadow-[0_4px_16px_rgba(0,0,0,0.03)] flex flex-col justify-between hover:border-blue-200 transition-colors"
+              >
+                <div>
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={cn(
+                          "w-12 h-12 rounded-full flex items-center justify-center",
+                          pocket.bg,
+                          pocket.color,
+                        )}
+                      >
+                        <IconRenderer name={pocket.icon} size={24} />
+                      </div>
+                      <div>
+                        <p className="text-slate-900 text-[15px] font-bold leading-tight">
+                          {pocket.name}
+                        </p>
+                        <p className="text-slate-500 text-[12px] font-medium">
+                          {pocket.type}
+                        </p>
+                      </div>
+                    </div>
+                    <Badge
+                      variant={
+                        pocket.status === "Aman"
+                          ? "success"
+                          : pocket.status === "Boros"
+                            ? "danger"
+                            : "warning"
+                      }
                     >
-                      <IconRenderer name={pocket.icon} size={24} />
-                    </div>
-                    <div>
-                      <p className="text-slate-900 text-[15px] font-bold leading-tight">
-                        {pocket.name}
-                      </p>
-                      <p className="text-slate-500 text-[12px] font-medium">
-                        {pocket.type}
-                      </p>
-                    </div>
+                      {pocket.status}
+                    </Badge>
                   </div>
-                  <Badge
-                    variant={
-                      pocket.status === "Aman"
-                        ? "success"
-                        : pocket.status === "Boros"
-                          ? "danger"
-                          : "warning"
-                    }
-                  >
-                    {pocket.status}
-                  </Badge>
-                </div>
-                <div className="mb-4">
-                  <p className="text-[11px] font-semibold text-slate-400 capitalize mb-0.5">
-                    Saldo Tersedia
-                  </p>
-                  <p className="text-slate-900 text-[26px] font-black tracking-tight leading-none">
-                    {formatCompactCurrency(pocket.balance)}
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col gap-3">
-                <div className="flex justify-between items-center bg-slate-50 border border-slate-100 rounded-xl py-2 px-3">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                      Trx Bln Ini
-                    </span>
-                    <span className="text-[13px] font-black text-slate-800">
-                      {pocket.trxCount} Kali
-                    </span>
-                  </div>
-                  <div className="w-[1px] h-6 bg-slate-200"></div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                      Update
-                    </span>
-                    <span className="text-[13px] font-black text-slate-800">
-                      {pocket.lastTrx}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 bg-slate-50 rounded-xl p-3 border border-slate-100">
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase">
-                      Masuk
+                  <div className="mb-4">
+                    <p className="text-[11px] font-semibold text-slate-400 capitalize mb-0.5">
+                      Saldo Tersedia
                     </p>
-                    <p className="text-[13px] font-bold text-emerald-600">
-                      {formatCompactCurrency(pocket.in)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase">
-                      Keluar
-                    </p>
-                    <p className="text-[13px] font-bold text-rose-600">
-                      {formatCompactCurrency(pocket.out)}
+                    <p className="text-slate-900 text-[26px] font-black tracking-tight leading-none">
+                      {formatCurrency(pocket.balance)}
                     </p>
                   </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="shrink-0 w-full flex items-center justify-center p-8 bg-slate-50 rounded-[24px] border-2 border-dashed border-slate-200 text-slate-400 text-sm font-bold">
+              Belum ada kantong
             </div>
-          ))}
+          )}
         </div>
       </div>
 
@@ -710,7 +683,7 @@ const HomeView = ({ data }) => {
         />
         <div className="flex flex-col gap-3">
           {data.tasks
-            .filter((t) => t.dateInt === 4)
+            .filter((t) => t.dateInt === new Date().getDate())
             .map((act) => (
               <div
                 key={act.id}
@@ -896,7 +869,7 @@ const TransactionDetailModal = ({ transaction, onClose }) => {
   if (!transaction) return null;
 
   return (
-    <div className="absolute inset-0 z-[110] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm overflow-hidden">
+    <div className="absolute inset-0 z-[9999] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm overflow-hidden">
       <div className="absolute inset-0" onClick={onClose} />
       <div className="relative w-full bg-white rounded-t-[32px] p-6 pt-8 pb-12 shadow-2xl animate-in fade-in slide-in-from-bottom-full duration-300">
         <button
@@ -1040,7 +1013,7 @@ const TransactionDetailModal = ({ transaction, onClose }) => {
 const FinanceView = ({ data }) => {
   const [finTab, setFinTab] = useState("transaksi");
   const tabs = ["transaksi", "kantong", "budget", "target", "hutang_piutang", "analisis"];
-  const [selectedTrxDate, setSelectedTrxDate] = useState(4); // Default 4 Mei
+  const [selectedTrxDate, setSelectedTrxDate] = useState(new Date().getDate());
   const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   const [filters, setFilters] = useState({
@@ -1295,7 +1268,7 @@ const FinanceView = ({ data }) => {
         {finTab === "transaksi" && (
           <div className="flex flex-col gap-3">
             <DailyDateSelector
-              dateLabel={`${selectedTrxDate} Mei 2026`}
+              dateLabel={`${selectedTrxDate} ${new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" })}`}
               selectedDate={selectedTrxDate}
               onPrev={handlePrevTrxDate}
               onNext={handleNextTrxDate}
@@ -2528,6 +2501,7 @@ const RouteMap = ({
                 act.color.includes('purple') ? 'bg-purple-500' :
                 act.color.includes('rose') ? 'bg-rose-500' : 'bg-slate-500';
               return (
+                // @ts-ignore
                 <MapMarker
                   key={act.id}
                   longitude={act.lng}
@@ -2587,10 +2561,12 @@ const RouteMap = ({
 // --- View Aktivitas Lengkap ---
 const ActivityView = ({ tasks, activities }) => {
   const [actTab, setActTab] = useState("tugas");
-  const [selectedTaskDate, setSelectedTaskDate] = useState(4);
-  const [selectedActDate, setSelectedActDate] = useState(4);
+  const today = new Date().getDate();
+  const [selectedTaskDate, setSelectedTaskDate] = useState(today);
+  const [selectedActDate, setSelectedActDate] = useState(today);
   const [isMapFullscreen, setIsMapFullscreen] = useState(false);
   const [timeFilter, setTimeFilter] = useState("Semua");
+  const currentMonthYear = new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" });
   const [focusedLocation, setFocusedLocation] = useState<{
     lng: number;
     lat: number;
@@ -2843,7 +2819,7 @@ const ActivityView = ({ tasks, activities }) => {
           </div>
 
           <DailyDateSelector
-            dateLabel={`${selectedTaskDate} Mei 2026`}
+            dateLabel={`${selectedTaskDate} ${currentMonthYear}`}
             selectedDate={selectedTaskDate}
             onPrev={handlePrevTaskDate}
             onNext={handleNextTaskDate}
@@ -2972,7 +2948,7 @@ const ActivityView = ({ tasks, activities }) => {
       {actTab === "aktivitas" && (
         <div className="px-5 animate-in fade-in duration-300">
           <DailyDateSelector
-            dateLabel={`${selectedActDate} Mei 2026`}
+            dateLabel={`${selectedActDate} ${currentMonthYear}`}
             selectedDate={selectedActDate}
             onPrev={handlePrevActDate}
             onNext={handleNextActDate}
@@ -3401,6 +3377,37 @@ const ArchiveView = ({ data }) => {
 
 // --- View Profile Lengkap ---
 const ProfileView = ({ data, onLogout }) => {
+  const [isResetting, setIsResetting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleResetData = async () => {
+    setIsResetting(true);
+    setErrorMsg("");
+    try {
+      const collectionsToClear = [
+        "pockets", "transactions", "tasks", "activities", 
+        "targets", "budgets", "notes", "archives", "debts"
+      ];
+      
+      const userId = data.user?.id || auth.currentUser?.uid;
+      if (!userId) throw new Error("User ID not found");
+
+      for (const colName of collectionsToClear) {
+        const q = query(collection(db, colName), where("userId", "==", userId));
+        const snapshot = await getDocs(q);
+        const deletePromises = snapshot.docs.map(docSnap => deleteDoc(doc(db, colName, docSnap.id)));
+        await Promise.all(deletePromises);
+      }
+      setShowConfirm(false);
+    } catch (err: any) {
+      console.error("Error resetting data:", err);
+      setErrorMsg("Gagal mereset data: " + err.message);
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   return (
     <div className="pb-32 pt-6 px-5">
       <div className="bg-white rounded-[24px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] border border-slate-200 p-6 flex flex-col items-center text-center mb-6">
@@ -3472,7 +3479,38 @@ const ProfileView = ({ data, onLogout }) => {
             <ChevronRight size={18} className="text-slate-300" />
           </div>
         ))}
-        <div className="p-4 border-t border-slate-100">
+        <div className="p-4 border-t border-slate-100 flex flex-col gap-3">
+          {errorMsg && (
+            <p className="text-[13px] text-red-500 font-medium">{errorMsg}</p>
+          )}
+          {showConfirm ? (
+            <div className="bg-orange-50 p-4 rounded-xl flex flex-col gap-3">
+              <p className="text-[13px] text-orange-800 font-medium">Anda yakin ingin menghapus semua data? Ini tidak dapat dikembalikan.</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleResetData}
+                  disabled={isResetting}
+                  className="flex-1 bg-orange-600 text-white font-bold text-[14px] py-2.5 rounded-lg flex items-center justify-center hover:bg-orange-700 transition-colors disabled:opacity-50"
+                >
+                  {isResetting ? "Proses..." : "Ya, Hapus!"}
+                </button>
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  disabled={isResetting}
+                  className="flex-1 bg-white text-slate-700 font-bold text-[14px] py-2.5 rounded-lg flex items-center justify-center border border-slate-200 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                >
+                  Batal
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowConfirm(true)}
+              className="w-full bg-orange-50 text-orange-600 font-bold text-[14px] py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-orange-100 transition-colors"
+            >
+              Hapus Data Dummy
+            </button>
+          )}
           <button
             onClick={onLogout}
             className="w-full bg-rose-50 text-rose-600 font-bold text-[14px] py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-rose-100 transition-colors"
@@ -3487,12 +3525,20 @@ const ProfileView = ({ data, onLogout }) => {
 
 // --- Login View ---
 const LoginView = () => {
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   const handleLogin = async () => {
+    setErrorMsg(null);
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login failed:", error);
+      if (error.code === 'auth/network-request-failed' || error.message?.includes('network-request-failed')) {
+        setErrorMsg('Login terblokir oleh browser. Silakan klik ikon "Open in New Tab" (kotak dengan tanda panah) di pojok kanan atas untuk login di tab baru.');
+      } else {
+        setErrorMsg('Terjadi kesalahan saat login: ' + (error.message || 'Silakan coba lagi.'));
+      }
     }
   };
 
@@ -3505,10 +3551,19 @@ const LoginView = () => {
         <h1 className="text-[28px] font-black text-slate-900 tracking-tight mb-2">
           Finance & Activities
         </h1>
-        <p className="text-[15px] font-medium text-slate-500 mb-8 leading-relaxed">
+        <p className="text-[15px] font-medium text-slate-500 mb-6 leading-relaxed">
           Pantau keuangan, jadwal, dan aktivitas harian Anda dalam satu
           dashboard canggih.
         </p>
+
+        {errorMsg && (
+          <div className="w-full mb-6 p-4 bg-rose-50 border border-rose-100 rounded-xl flex items-start gap-3 text-left">
+            <TriangleAlert className="text-rose-500 shrink-0 mt-0.5" size={18} />
+            <p className="text-[13px] font-medium text-rose-700 leading-snug">
+              {errorMsg}
+            </p>
+          </div>
+        )}
 
         <button
           onClick={handleLogin}
@@ -3522,7 +3577,7 @@ const LoginView = () => {
           Lanjutkan dengan Google
         </button>
 
-        <div className="mt-8 pt-8 border-t border-slate-100">
+        <div className="mt-8 pt-8 border-t border-slate-100 w-full">
           <div className="flex gap-4 justify-center">
             <div className="flex flex-col items-center">
               <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-1">
@@ -3829,18 +3884,18 @@ const AddModal = ({ isOpen, onClose, user, activeTab }) => {
         });
       }
       onClose();
-    } catch(err) {
-      console.error(err);
-      alert("Gagal menambahkan data.");
+    } catch(err: any) {
+      console.error("Add Doc Error:", err);
+      alert(`Gagal menambahkan data. Error: ${err.message || err.code || String(err)}`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="absolute inset-0 z-[100] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm overflow-hidden p-2 pb-6">
+    <div className="fixed inset-0 z-[10000] flex items-end sm:items-center justify-center bg-slate-900/60 backdrop-blur-md overflow-hidden p-0 sm:p-4">
       <div className="absolute inset-0" onClick={onClose} />
-      <div className="relative w-full max-w-[90%] md:max-w-md flex flex-col bg-slate-50 rounded-3xl overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-200">
+      <div className="relative w-full h-full sm:h-auto sm:max-w-2xl flex flex-col bg-slate-50 sm:rounded-[40px] overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-full sm:slide-in-from-bottom-5 duration-300">
         <div className="p-4 bg-white border-b border-slate-200 flex justify-between items-center z-10 shadow-sm">
           <div className="flex items-center gap-3">
             {type !== 'selection' && (
@@ -4132,52 +4187,61 @@ const useFirebaseData = (user: FirebaseUser | null) => {
         }
       }
     };
-    initData();
 
-    // Real-time listeners
-    const unsubscibers: any[] = [];
+    const runInit = async () => {
+      await initData();
+      
+      // Real-time listeners
+      const unsubscibers: any[] = [];
 
-    const setupListener = (colName: string, stateKey: string) => {
-      const q = query(collection(db, colName), where("userId", "==", userId));
-      const unsubscribe = onSnapshot(
-        q,
-        (snapshot) => {
-          const items = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
+      const setupListener = (colName: string, stateKey: string) => {
+        const q = query(collection(db, colName), where("userId", "==", userId));
+        const unsubscribe = onSnapshot(
+          q,
+          (snapshot) => {
+            const items = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            setData((prev) => ({ ...prev, [stateKey]: items }));
+          },
+          (err) => handleFirestoreError(err, OperationType.LIST, colName),
+        );
+        unsubscibers.push(unsubscribe);
+      };
+
+      // User profile listener
+      const unsubUser = onSnapshot(doc(db, "users", userId), (doc) => {
+        if (doc.exists()) {
+          setData((prev) => ({
+            ...prev,
+            user: { id: doc.id, ...(doc.data() as any) },
           }));
-          setData((prev) => ({ ...prev, [stateKey]: items }));
-        },
-        (err) => handleFirestoreError(err, OperationType.LIST, colName),
-      );
-      unsubscibers.push(unsubscribe);
+        }
+      });
+      unsubscibers.push(unsubUser);
+
+      setupListener("pockets", "pockets");
+      setupListener("transactions", "transactions");
+      setupListener("tasks", "tasks");
+      setupListener("activities", "activities");
+      setupListener("targets", "targets");
+      setupListener("budgets", "budgets");
+      setupListener("notes", "notes");
+      setupListener("archives", "archives");
+      setupListener("debts", "debts");
+
+      setLoading(false);
+
+      return () => {
+        unsubscibers.forEach((unsub) => unsub());
+      };
     };
 
-    // User profile listener
-    const unsubUser = onSnapshot(doc(db, "users", userId), (doc) => {
-      if (doc.exists()) {
-        setData((prev) => ({
-          ...prev,
-          user: { id: doc.id, ...(doc.data() as any) },
-        }));
-      }
-    });
-    unsubscibers.push(unsubUser);
-
-    setupListener("pockets", "pockets");
-    setupListener("transactions", "transactions");
-    setupListener("tasks", "tasks");
-    setupListener("activities", "activities");
-    setupListener("targets", "targets");
-    setupListener("budgets", "budgets");
-    setupListener("notes", "notes");
-    setupListener("archives", "archives");
-    setupListener("debts", "debts");
-
-    setLoading(false);
+    const unsubTask = runInit();
 
     return () => {
-      unsubscibers.forEach((unsub) => unsub());
+      unsubTask.then(unsub => unsub?.());
     };
   }, [user]);
 

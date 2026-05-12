@@ -14,6 +14,7 @@ import {
   useState,
   type ReactNode,
   type RefObject,
+  type Key,
 } from "react";
 import { createPortal } from "react-dom";
 import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
@@ -158,6 +159,7 @@ function useMarkerContext() {
 }
 
 type MapMarkerProps = {
+  key?: Key;
   longitude: number;
   latitude: number;
   children: ReactNode;
@@ -817,6 +819,7 @@ function MapPopup({
 }
 
 type MapRouteProps = {
+  key?: Key;
   coordinates: [number, number][];
   color?: string;
   width?: number;
